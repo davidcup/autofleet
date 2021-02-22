@@ -56,8 +56,10 @@ pipeline {
 				script{	
 				    sh "git config --add remote.origin.fetch +refs/heads/master:refs/remotes/origin/master"
 				    sh "git fetch --no-tags" 
-					
+					sh "mkdir -p deploy"
 				    def repoName = env.GIT_URL.replaceFirst(/^.*\/([^\/]+?).git$/, '$1')
+					
+					echo "Deploying from ${repoName}"
 					
 				    populateGlobalVariables()
 					
@@ -65,10 +67,10 @@ pipeline {
                    
  				    for (int i = 0; i < sourceChanged.size(); i++) {
                         def file = sourceChanged[i]
-                        echo "${file}"
+                        echo "This file changed: ${file}"
                     }	 
-                    
-                    sh(returnStdout: true, script: "git diff -z --name-only origin/master..origin/release | xargs -0 -IREPLACE rsync -aR REPLACE /home/david/jenkins/workspace/autofleet/deploy")
+                    echo "Copying files to Publish Folder"
+                    sh(returnStdout: true, script: "cp -pv --parents $(git diff --name-only origin/master..origin/release) deploy")
 				}
 			 }
 	    }
