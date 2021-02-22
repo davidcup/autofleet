@@ -53,11 +53,22 @@ pipeline {
 						
 	    stage('\u278A Init') {		
              steps {
-				script{		
-				     
+				script{	
+				    sh "git config --add remote.origin.fetch +refs/heads/master:refs/remotes/origin/master"
+				    sh "git fetch --no-tags" 
+					
 				    def repoName = env.GIT_URL.replaceFirst(/^.*\/([^\/]+?).git$/, '$1')
+					
 				    populateGlobalVariables()
-                   		 
+					
+				    List<String> sourceChanged = sh(returnStdout: true, script: "git diff --name-only origin/master..origin/${env.BRANCH_NAME}").split()
+                   
+ 				    for (int i = 0; i < sourceChanged.size(); i++) {
+                        def file = sourceChanged[i]
+                        echo "${file}"
+                    }	 
+                    
+                    sh(returnStdout: true, script: "git diff -z --name-only origin/master..origin/release | xargs -0 -IREPLACE rsync -aR REPLACE /home/david/jenkins/workspace/autofleet/deploy")
 				}
 			 }
 	    }
