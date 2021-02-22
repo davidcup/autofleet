@@ -73,9 +73,8 @@ pipeline {
 					sh 'echo Copying files to Publish Folder'
 					
                     sh(returnStdout: true, script: "git diff --name-only origin/master..origin/release | xargs cp -pv --parents --t deploy")
-					
-					sh 'echo Removing unwanted files'
-					sh(returnStdout: true, script: "find . -name "Jenkinsfile" -type f -delete")
+										
+					sh(returnStdout: true, script: "find . -name 'Jenkinsfile' -type f -delete")
 				}
 			 }
 	    }
