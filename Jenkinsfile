@@ -69,8 +69,13 @@ pipeline {
                         def file = sourceChanged[i]
                         echo "This file changed: ${file}"
                     }	 
-                    echo "Copying files to Publish Folder"
-                    sh(returnStdout: true, script: "cp -pv --parents $(git diff --name-only origin/master..origin/release) deploy")
+                    
+					sh 'echo Copying files to Publish Folder'
+					
+                    sh(returnStdout: true, script: "git diff --name-only origin/master..origin/release | xargs cp -pv --parents --t deploy")
+					
+					sh 'echo Removing unwanted files'
+					sh(returnStdout: true, script: "find . -name "Jenkinsfile" -type f -delete")
 				}
 			 }
 	    }
