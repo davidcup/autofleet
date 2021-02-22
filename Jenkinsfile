@@ -16,8 +16,7 @@ def skipped = 0
 
 
 def getLastChangedFiles = {
-    def files = sh(returnStdout: true, script: 'git diff  HEAD')
-    author = sh(returnStdout: true, script: "git --no-pager show -s --format='%an' ${commit}").trim()
+    def files = sh(returnStdout: true, script: 'git diff  HEAD')    
 }
 
 def getLastCommitMessage = {
